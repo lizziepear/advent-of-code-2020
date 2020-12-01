@@ -11,6 +11,7 @@ editor_options:
 library(dplyr)
 ```
 
+# Part 1 - two numbers
 
 ## Aim
 
@@ -28,10 +29,11 @@ tail(v)
 
 ```
 
+## Loop
 
-## Loop version
+I am going to use a loop to find the answer. Not the most efficient method, but it gets the job done.
 
-```{r loop}
+```{r loop-1}
 
 aim <- 2020
 
@@ -64,6 +66,7 @@ for (i in 1:length(v)) {
 
 ```
 
+## Results
 
 My numbers are: `r tmp.num` and `r tmp.oth`.
 
@@ -75,6 +78,71 @@ Product of the numbers: `r tmp.num * tmp.oth`.
 
 ## clean up
 rm(aim, i, k, tmp.num, tmp.others, tmp.oth, tmp.res)
+
+```
+
+
+# Part 2 - three numbers
+
+## Aim
+
+Find the _three_ numbers that sum to 2020, and calculate their product.
+
+## Loop
+
+Using a similar loop, but making it more efficient - I'm only storing the index of the current three numbers as i, j and k, and only comparing each number against the other numbers that I haven't compared it against.
+
+Also using a `stop` variable to make the `if` and `break` calls neater.
+
+```{r loop}
+
+aim <- 2020
+
+stop <- F
+
+for (i in 1:(length(v)-2)) {
+  
+  # i <- 1  # testing
+  
+  for (j in (i+1):(length(v)-1)) {
+    
+    # j <- i+1  # testing
+    
+    for (k in (j+1):length(v)) {
+      
+      # k <- j+1  # testing
+      # cat((v[i] + v[j] + v[k]), "\n")  # print out
+      
+      if ((v[i] + v[j] + v[k]) == aim) {
+        stop <- T
+        break
+      }
+      
+    }
+    
+    if(stop) {break}
+    
+  }
+  
+  if (stop) {break}
+  
+}
+
+```
+
+
+## Results
+
+My numbers are: `r v[i]`, `r v[j]` and `r v[k]`.
+
+Sum of the numbers: `r v[i] + v[j] + v[k]`.
+
+Product of the numbers: `r v[i] * v[j] * v[k]`.
+
+```{r clean-up-2, include = F}
+
+## clean up
+rm(aim, i, k, j, stop)
 
 ```
 
