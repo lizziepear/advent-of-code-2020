@@ -1,0 +1,80 @@
+---
+title: "Advent of Code Day 01"
+author: "Lizzie Pearmain"
+date: "1 December 2020"
+output: github_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = F}
+library(dplyr)
+```
+
+
+## Aim
+
+Have a list of numbers. Two of them sum to 2020. I need to find these two numbers, and multiply them together. This is my answer.
+
+## Read input
+
+```{r input}
+
+# read input
+v <- readLines("input.txt") %>%
+  as.integer()
+head(v)
+tail(v)
+
+```
+
+
+## Loop version
+
+```{r loop}
+
+aim <- 2020
+
+for (i in 1:length(v)) {
+  # i <- 1  # testing
+  
+  tmp.num <- v[i]  # first number
+  tmp.others <- v[-i]  # vector of second numbers
+  
+  for (k in 1:length(tmp.others)) {
+    
+    # k <- 1  # testing
+    
+    tmp.oth <- tmp.others[k]  # second number
+    tmp.res <- tmp.num + tmp.oth  # find sum
+    
+    # break loop when aim is reached
+    if (tmp.res == aim) {
+      break
+    }
+    
+  }
+  
+  # break look when aim is reached
+  if (tmp.res == aim) {
+    break
+  }
+  
+}
+
+```
+
+
+My numbers are: `r tmp.num` and `r tmp.oth`.
+
+Sum of the numbers: `r tmp.num + tmp.oth`.
+
+Product of the numbers: `r tmp.num * tmp.oth`.
+
+```{r clean-up-1, include = F}
+
+## clean up
+rm(aim, i, k, tmp.num, tmp.others, tmp.oth, tmp.res)
+
+```
+
