@@ -1,0 +1,170 @@
+---
+title: "Advent of Code Day 02"
+author: "Lizzie Pearmain"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  github_document:
+    toc: true
+    toc_depth: 2
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = F}
+library(dplyr)
+library(stringr)
+library(knitr)
+library(kableExtra)
+```
+
+# Part 1
+
+Format: '1-3 a: abcde' means the password must contain between 1 and 3 instances of the letter 'a', and the string after the colon is the password. I have to check whether each password obeys its rule.
+
+
+```{r read-input}
+
+## mini test set
+test.v <- c("1-3 a: abcde", "1-3 b: cdefg", "2-9 c: ccccccccc")
+test.df <- data.frame(string = test.v)
+glimpse(test.df)
+
+## full set
+v <- readLines("input.txt")
+df <- data.frame(string = v)
+glimpse(df)
+```
+
+
+## make rule
+
+Function: Split string; define the rule; assess whether the password meets the rule.
+
+```{r get-rule}
+
+## define function
+assess_rule <- function(string) {
+  
+  splits <- as.character(unlist(strsplit(string, "-|\\s|:")))
+  splits <- splits[splits != ""]  # remove empty strings
+  
+  r.min <- as.numeric(splits[1])
+  r.max <- as.numeric(splits[2])
+  r.letter <- as.character(splits[3])
+  r.passwd <- as.character(splits[4])
+  
+  r.n <- str_count(r.passwd, r.letter)
+  
+  r.pass <- (r.n >= r.min & r.n <= r.max)
+
+  return(r.pass)
+  
+}
+
+## Vectorize the function
+assess_rule_v <- Vectorize(assess_rule, vectorize.args = "string")
+
+## test on mini set
+assess_rule_v(test.v)
+
+```
+
+
+## apply rule
+
+Apply to `string` field in data frame using `dplyr::mutate()`
+
+```{r apply-rule}
+
+df <- df %>%
+  mutate(passes = assess_rule_v(string))
+
+glimpse(df)
+
+```
+
+
+## get answer
+
+How many passwords are valid?
+
+```{r get-ans}
+
+df %>%
+  group_by(passes) %>%
+  count() %>%
+  kable()
+
+```
+
+
+
+# Part 2 
+
+New rule: The numbers actually refer to positions in the password (indexing from 1), and exactly one of those positions must have this letter.
+
+1-3 a: abcde is valid: position 1 contains a and position 3 does not.
+
+## make rule
+
+```{r make-rule-2}
+
+string <- v[1]
+
+## define function
+assess_rule_2 <- function(string) {
+  
+  splits <- as.character(unlist(strsplit(string, "-|\\s|:")))
+  splits <- splits[splits != ""]  # remove empty strings
+  
+  r.a <- as.numeric(splits[1])
+  r.b <- as.numeric(splits[2])
+  r.letter <- as.character(splits[3])
+  r.passwd <- as.character(splits[4])
+  
+  ## get indices of letter in password
+  r.indices <- as.numeric(unlist(gregexpr(pattern = r.letter, r.passwd)))
+  
+  ## rule: exclusive or statement
+  r.pass <- xor((r.a %in% r.indices), (r.b %in% r.indices))
+
+  return(r.pass)
+  
+}
+
+## Vectorize the function
+assess_rule_2_v <- Vectorize(assess_rule_2, vectorize.args = "string")
+
+## test on mini set
+assess_rule_2_v(test.v)
+
+```
+
+
+## apply rule
+
+Apply to `string` field in data frame using `dplyr::mutate()`
+
+```{r apply-rule-2}
+
+df <- df %>%
+  mutate(passes_2 = assess_rule_2_v(string))
+
+glimpse(df)
+
+```
+
+
+## get answer
+
+How many passwords are valid under the new rule?
+
+```{r get-ans-2}
+
+df %>%
+  group_by(passes_2) %>%
+  count() %>%
+  kable()
+
+```
+
