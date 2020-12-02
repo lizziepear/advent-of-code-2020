@@ -1,5 +1,5 @@
 # advent-of-code-2020
-Advent of Code 2020 challenges (using R)
+Advent of Code 2020 challenges (using R) :santa: :christmas_tree:	:star:
 
 Sign up here: https://adventofcode.com/2020
 
