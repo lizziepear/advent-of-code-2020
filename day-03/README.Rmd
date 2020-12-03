@@ -128,13 +128,15 @@ matrix_count_trees(m, r.step = 1, c.step = 3)
 
 ## use function
 
-* 1. Right 1, down 1.
-* 2. Right 3, down 1. (This is the slope you already checked.)
-* 3. Right 5, down 1.
-* 4. Right 7, down 1.
-* 5. Right 1, down 2.
+1. Right 1, down 1.
+1. Right 3, down 1. (This is the slope you already checked.)
+1. Right 5, down 1.
+1. Right 7, down 1.
+1. Right 1, down 2.
 
 What do you get if you multiply together the numbers of trees encountered on each of these paths?
+
+I ought to do this with a loop, but it's getting late and I need to do my actual work, so will do it manually for now and maybe come back later to make it more efficient!
 
 ```{r part-2}
 # get numbers of trees for each path
