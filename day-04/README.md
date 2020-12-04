@@ -99,7 +99,7 @@ for (k in 1:length(v.new)) {
   for (var in vars) {
   # var <- vars[4]
   
-  var.pat <- paste0(var, ":[:graph:]+")
+  var.pat <- paste0(var, ":[:graph:]+") # pattern to match the var
   
   var.tmp <- str_extract(t, var.pat) %>%
     substr(., start = 5, stop = nchar(.)) # is NA if variable absent
@@ -110,7 +110,6 @@ for (k in 1:length(v.new)) {
   }
   
   # add tmp.res to results
-  # tmp.res
   results <- rbind(results, tmp.res)
 }
 
@@ -174,6 +173,10 @@ TRUE
 </tr>
 </tbody>
 </table>
+The answer is: 200 passports are valid.
+
+------------------------------------------------------------------------
+
 # Part 2 - add data validation
 
 ## apply rules
@@ -190,26 +193,29 @@ TRUE
 -   cid (Country ID) - ignored, missing or not.
 
 ``` r
+na_if_not_number_between <- function(number, n.min, n.max) {
+  if (is.na(number) | !is.numeric(number)) {
+    output <- NA_real_
+  } else if ((as.numeric(number) >= n.min) & (as.numeric(number) <= n.max)) {
+    output <- number
+  } else {
+    output <- NA_real_
+  }
+  return(output)
+}
+na_if_not_number_between_v <- Vectorize(na_if_not_number_between, vectorize.args = "number")
+
 df <- results
 
 df <- df %>%
   # rule for byr: number between 1920 - 2002
-  mutate(byr = case_when(
-    (as.numeric(byr) >= 1920) & (as.numeric(byr) <= 2002) ~ as.numeric(byr),  # is valid
-    TRUE ~ NA_real_  # not valid
-  )) %>%
+  mutate(byr = na_if_not_number_between_v(as.numeric(byr), n.min=1920, n.max=2002)) %>%
   # rule for iyr: number between 2010 - 2020
-  mutate(iyr = case_when(
-    (as.numeric(iyr) >= 2010) & (as.numeric(iyr) <= 2020) ~ as.numeric(iyr),  # is valid
-    TRUE ~ NA_real_  # not valid
-  )) %>%
+  mutate(iyr = na_if_not_number_between_v(as.numeric(iyr), n.min=2010, n.max=2020)) %>%
   # rule for eyr: number between 2020 - 2030
-  mutate(eyr = case_when(
-    (as.numeric(eyr) >= 2020) & (as.numeric(eyr) <= 2030) ~ as.numeric(eyr),  # is valid
-    TRUE ~ NA_real_  # not valid
-  )) %>%
+  mutate(eyr = na_if_not_number_between_v(as.numeric(eyr), n.min=2020, n.max=2030)) %>%
   # rule for hgt: extract number and units, check rule
-  mutate(hgt.n = str_extract(hgt, "[:digit:]+"),
+  mutate(hgt.n = as.numeric(str_extract(hgt, "[:digit:]+")),
          hgt.u = str_extract(hgt, "[:lower:]+")) %>%
   mutate(hgt = case_when(
     (hgt.u == "cm") & (hgt.n >= 150) & (hgt.n <= 193) ~ hgt,
@@ -280,4 +286,6 @@ TRUE
 </tr>
 </tbody>
 </table>
+The answer is: 116 passports are valid.
+
 Day 4 done!
