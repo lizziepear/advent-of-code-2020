@@ -1,7 +1,7 @@
 Advent of Code Day 02
 ================
 Lizzie Pearmain
-02 December, 2020
+07 December, 2020
 
 -   [Part 1](#part-1)
     -   [make rule](#make-rule)
@@ -129,6 +129,9 @@ TRUE
 </tr>
 </tbody>
 </table>
+
+------------------------------------------------------------------------
+
 # Part 2
 
 New rule: The numbers actually refer to positions in the password (indexing from 1), and exactly one of those positions must have this letter.
