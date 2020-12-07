@@ -1,50 +1,35 @@
----
-title: "Advent of Code Day 07"
-author: "Lizzie Pearmain"
-date: "`r format(Sys.time(), '%d %B, %Y')`"
-output:
-  github_document:
-    toc: true
-    toc_depth: 2
-editor_options: 
-  chunk_output_type: console
----
+Advent of Code Day 07
+================
+Lizzie Pearmain
+07 December, 2020
 
-```{r setup, include = F}
-library(dplyr)
-library(stringr)
-library(knitr)
-library(kableExtra)
-```
-
+-   [Part 1](#part-1)
+    -   [list of rules](#list-of-rules)
+    -   [write function](#write-function)
+    -   [apply function](#apply-function)
+-   [Part 2](#part-2)
 
 ![Day 7 explanation part 1](img/intro-01.png)
 
 ![Day 7 explanation part 2](img/intro-02.png)
 
-
 # Part 1
-
 
 Read input.
 
-```{r read-input}
-
+``` r
 # mini test set
 test.v <- readLines("input_test.txt")
 
 # full set
 full.v <- readLines("input.txt")
-
 ```
-
 
 ## list of rules
 
 Extract rules as a nested list.
 
-```{r extract-rules}
-
+``` r
 v <- test.v  # testing
 
 # write function
@@ -81,12 +66,75 @@ split_rules <- function(string) {
 # test function on one string
 string <- "mirrored yellow bags contain 1 wavy purple bag, 5 shiny teal bags, 5 shiny cyan bags, 1 shiny crimson bag."
 split_rules(string)
+```
 
+    ## $NAME
+    ## [1] "mirrored yellow"
+    ## 
+    ## $`wavy purple`
+    ## [1] "1"
+    ## 
+    ## $`shiny teal`
+    ## [1] "5"
+    ## 
+    ## $`shiny cyan`
+    ## [1] "5"
+    ## 
+    ## $`shiny crimson`
+    ## [1] "1"
+
+``` r
 # apply to multiple strings, bind into a list
 list(split_rules(v[1]), split_rules(v[2]))  # test with 2 of them
+```
+
+    ## [[1]]
+    ## [[1]]$NAME
+    ## [1] "light red"
+    ## 
+    ## [[1]]$`bright white`
+    ## [1] "1"
+    ## 
+    ## [[1]]$`muted yellow`
+    ## [1] "2"
+    ## 
+    ## 
+    ## [[2]]
+    ## [[2]]$NAME
+    ## [1] "dark orange"
+    ## 
+    ## [[2]]$`bright white`
+    ## [1] "3"
+    ## 
+    ## [[2]]$`muted yellow`
+    ## [1] "4"
+
+``` r
 lapply(v[c(1,2)], split_rules)  # test lapply - it works!
+```
 
+    ## [[1]]
+    ## [[1]]$NAME
+    ## [1] "light red"
+    ## 
+    ## [[1]]$`bright white`
+    ## [1] "1"
+    ## 
+    ## [[1]]$`muted yellow`
+    ## [1] "2"
+    ## 
+    ## 
+    ## [[2]]
+    ## [[2]]$NAME
+    ## [1] "dark orange"
+    ## 
+    ## [[2]]$`bright white`
+    ## [1] "3"
+    ## 
+    ## [[2]]$`muted yellow`
+    ## [1] "4"
 
+``` r
 # EXTRACT TEST SET AND FULL SET ----
 
 # apply to the whole set with lapply()
@@ -95,16 +143,13 @@ v.full.list <- lapply(full.v, split_rules)
 
 # clean up
 rm(v, string)
-
 ```
-
 
 ## write function
 
-Write function to take a particular colour, find all the colours that can contain that colour, and find all the colours that can contain _those_ colours, ... etc.
+Write function to take a particular colour, find all the colours that can contain that colour, and find all the colours that can contain *those* colours, ... etc.
 
-```{r write-function}
-
+``` r
 find_containing_colours <- function(colour, my.list) {
   # find where this colour appears in the list
   inds <- grep(colour, my.list)
@@ -158,70 +203,52 @@ find_all_cols_eventually_containing <- function(colour, my.list) {
   
   return(cols.containing)
 }
-
 ```
-
 
 ## apply function
 
 Test function with the test set
 
-```{r test-function}
-
+``` r
 # test with shiny gold on the test set
 cols.containing <- find_all_cols_eventually_containing("shiny gold", v.test.list)
 # how many bag colours?
 length(cols.containing) - 1  # -1 because shiny gold is still in there
-
 ```
 
+    ## [1] 4
 
 Now for the real set
 
-```{r apply-real}
-
+``` r
 # test with shiny gold on the test set
 cols.containing <- find_all_cols_eventually_containing("shiny gold", v.full.list)
 # how many bag colours?
 length(cols.containing) - 1  # -1 because shiny gold is still in there
-
 ```
 
+    ## [1] 121
 
-Answer: sum is `r length(cols.containing) - 1`.
+Answer: sum is 121.
 
-***
-
+------------------------------------------------------------------------
 
 # Part 2
 
-
 ![Day 7 puzzle part 2](img/part2-01.png)
-
 
 Read in the new test list and create the list of rules.
 
-```{r part2-1}
-
+``` r
 # read new test set
 test2.v <- readLines("input_test_part2.txt")
 
 # make list of rules
 v.test2.list <- lapply(test2.v, split_rules)
-
 ```
-
 
 New function needs to:
 
-* Find the element in the list that has NAME 'shiny gold'
-* Find the colours contained, and the number of those colours
-* Iterate over the levels, keeping a counter of the number of bags counted.
-
-
-
-
-
-
-
-
+-   Find the element in the list that has NAME 'shiny gold'
+-   Find the colours contained, and the number of those colours
+-   Iterate over the levels, keeping a counter of the number of bags counted.
